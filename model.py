@@ -10,7 +10,7 @@ from blocks import *
 class DANet(nn.Module):
     def __init__(self,dataset):
         super(DAGCN,self).__init__()
-        options = {'seed':[62,3,5],'seed iv':[62,4,5],'deap':[32,4,4]}
+        options = {'seed':[62,3,5],'seed iv':[62,4,5]}
         self.chan_num = options[dataset][0]
         self.class_num = options[dataset][1]
         self.band_num = options[dataset][2]
@@ -26,7 +26,7 @@ class DANet(nn.Module):
         self.fc2 = nn.Linear(64,self.class_num)
 
     def forward(self,x):
-        #[n, 32, 8]
+        
         A_ds = self.GATENet(self.A)
         A_ds = A_ds.reshape(self.chan_num, self.chan_num)
         de = x[:,:,:self.band_num]
@@ -34,7 +34,6 @@ class DANet(nn.Module):
         feat1 = self.gcn_DE(de,A_ds),A_ds)
         feat2 = self.gcn_PSD(psd,A_ds),A_ds)
         
-        #[n, 32, 8]
         feat = torch.cat([feat1,feat2],dim=2)
         feat = self.ATFFNet(feat,A_ds)
         feat = feat.reshape(-1,self.chan_num*self.band_num*2)
@@ -47,8 +46,8 @@ class DANet(nn.Module):
     
 
 if __name__ =='main':
-    for dataset in ['seed','seed iv','deap']:
+    for dataset in ['seed','seed iv']:
         model = DANet(dataset).cuda()
-        feat = torch.rand(10,32,8).cuda()
+        x = torch.rand(10,62,10).cuda()
         output = model(x)
-        print('Output for DEAP Dataset: ',output.shape)
+        print('Output for {} Dataset: '.format(dataset), output.shape)
