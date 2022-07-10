@@ -17,7 +17,7 @@ class DANet(nn.Module):
 
         self.gcn_DE = HGCN(dim = 1, chan_num = self.chan_num,band_num=self.band_num, reduction_ratio = 128, si = 256)
         self.gcn_PSD = HGCN(dim = 1, chan_num = self.chan_num,band_num=self.band_num, reduction_ratio = 128, si = 256)
-        self.ATFFNet = Encoder(n_layers=2,n_heads=5,d_model=self.band_num*2,d_k=8,d_v=8,d_ff=10)
+        self.ATFFNet = Encoder(n_layers=1,n_heads=5,d_model=self.band_num*2,d_k=8,d_v=8,d_ff=10)
         
         self.A = torch.rand((1, self.chan_num * self.chan_num), dtype=torch.float32, requires_grad=False).cuda()
         self.GATENet = GATENet(self.chan_num * self.chan_num, reduction_ratio=128)
